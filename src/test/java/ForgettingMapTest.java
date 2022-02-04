@@ -11,12 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ForgettingMapTest {
 
-    private ForgettingMap<Integer, String> forgettingMap;
-
-    @BeforeEach
-    void setup() {
-        forgettingMap = new ForgettingMap<>(5);
-    }
+    private ForgettingMap<Integer, String> forgettingMap = new ForgettingMap<>(5);
 
     @Nested
     class TestAdd {
@@ -84,14 +79,24 @@ class ForgettingMapTest {
     @Nested
     class TestFind {
 
+        @BeforeEach
+        void setup() {
+            forgettingMap.add(1, "Test");
+        }
+
         @Test
         void testFind() {
-            fail();
+            final String val = forgettingMap.find(1);
+
+            assertNotNull(val);
+            assertEquals("Test", val);
         }
 
         @Test
         void testFindInvalid() {
-            fail();
+            final String val = forgettingMap.find(2);
+
+            assertNull(val);
         }
     }
 }
