@@ -2,6 +2,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +35,7 @@ class ForgettingMapTest {
 
         @Test
         void testAddMultiple() {
-            IntStream.range(1, 4).forEach(i -> forgettingMap.add(i, "Test" + i));
+            IntStream.rangeClosed(1, 3).forEach(i -> forgettingMap.add(i, "Test" + i));
 
             assertEquals(3, forgettingMap.size());
             assertEquals("Test1", forgettingMap.find(1));
@@ -54,16 +57,27 @@ class ForgettingMapTest {
 
         @Test
         void testAddExcessive() {
-            IntStream.range(1, 11).forEach(i -> forgettingMap.add(i, "Test" + i));
+            IntStream.rangeClosed(1, 10).forEach(i -> forgettingMap.add(i, "Test" + i));
 
-            assertEquals(5, forgettingMap.size());
-            IntStream.range(1, 6).forEach(i -> assertNull(forgettingMap.find(i)));
-            IntStream.range(6, 11).forEach(i -> assertNotNull(forgettingMap.find(i)));
+            assertEquals(forgettingMap.getMaxSize(), forgettingMap.size());
+            IntStream.rangeClosed(1, 5).forEach(i -> assertNull(forgettingMap.find(i)));
+            IntStream.rangeClosed(6, 10).forEach(i -> assertNotNull(forgettingMap.find(i)));
         }
 
         @Test
-        void testAddConcurrent() {
-            fail();
+        void testAddConcurrent() throws InterruptedException {
+            final ExecutorService service = Executors.newFixedThreadPool(10);
+            IntStream.rangeClosed(1, 50).forEach(i -> service.execute(() -> forgettingMap.add(i, "Test" + i)));
+
+            service.shutdown();
+
+            if (service.awaitTermination(10L, TimeUnit.SECONDS)) {
+                assertEquals(forgettingMap.getMaxSize(), forgettingMap.size());
+
+            } else {
+                fail("Failed to execute all threads in time, please look at fixing this");
+            }
+
         }
     }
 
