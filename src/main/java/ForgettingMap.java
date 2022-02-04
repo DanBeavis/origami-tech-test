@@ -1,8 +1,10 @@
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ForgettingMap {
+public class ForgettingMap<K, V> {
 
-    private final ConcurrentHashMap<Integer, String> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<K, V> map  = new ConcurrentHashMap<>();
+    private final ArrayList<K>            list = new ArrayList<>();
 
     private final int maxSize;
 
@@ -10,11 +12,18 @@ public class ForgettingMap {
         this.maxSize = maxSize;
     }
 
-    public String add(final Integer integer, final String string) {
-        return map.put(integer, string);
+    public V add(final K key, final V val) {
+        list.add(key);
+
+        if (map.size() == maxSize) {
+            map.remove(list.get(0));
+            list.remove(0);
+        }
+
+        return map.put(key, val);
     }
 
-    public String find(final Integer integer) {
+    public V find(final K integer) {
         return map.get(integer);
     }
 
