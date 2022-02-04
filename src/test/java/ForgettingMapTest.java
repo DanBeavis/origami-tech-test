@@ -1,16 +1,17 @@
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ForgettingMapTest {
 
     private ForgettingMap forgettingMap;
 
-    @BeforeAll
+    @BeforeEach
     void setup() {
-        forgettingMap = new ForgettingMap();
+        forgettingMap = new ForgettingMap(5);
     }
 
     @Nested
@@ -18,7 +19,22 @@ class ForgettingMapTest {
 
         @Test
         void testAddSingle() {
-            assertFalse(true);
+            fail();
+        }
+
+        @Test
+        void testAddMultiple() {
+            fail();
+        }
+
+        @Test
+        void testAddExcessive() {
+            fail();
+        }
+
+        @Test
+        void testAddConcurrent() {
+            fail();
         }
     }
 
@@ -27,7 +43,12 @@ class ForgettingMapTest {
 
         @Test
         void testFind() {
-            assertFalse(true);
+            fail();
+        }
+
+        @Test
+        void testFindInvalid() {
+            fail();
         }
     }
 }
